@@ -1,0 +1,59 @@
+{
+    "version": "1.000",
+    "name": "custom.python.outlook",
+    "metricGroup": "custom.python.outlook",
+    "type": "python",
+    "entity": "PROCESS_GROUP_INSTANCE",
+    "processTypes": [4],
+    "source": {
+        "package": "outlook_extension",
+        "className": "OUTLOOKExtension",
+        "activation": "Singleton"
+    },
+    "properties": [
+        {"key": "ignored", "type": "String"},
+        {"key": "monitored", "type": "String"}
+    ],
+    "configUI": {
+        "displayName": "Outlook Perfmon Extension",
+        "properties": [
+            {"key": "ignored", "displayName": "List of instances to ignore", "displayHint":  "Comma separated, accepts regex"},
+            {"key": "monitored", "displayName": "List of instances to monitor", "displayHint": "Comma separated, accepts regex"}
+        ]
+    },
+    "metrics": [
+        {
+            "timeseries": {
+                "key": "thread_count",
+                "unit": "Count",
+                "aggregation": "max",
+                "displayname": "Outlook - Thread Count",
+                "dimensions": [
+                    "rx_pid",
+                    "Instance"
+                ]
+            },
+            "source": {
+                "process_name": "OUTLOOK.EXE",
+                "object": "Process",
+                "counter": "Thread Count"
+            }
+        }
+    ],
+    "ui": {
+        "charts": [
+            {
+                "group": "Additional Metrics",
+                "title": "Thread Count",
+                "series": [
+                    {
+                        "key":  "thread_count",
+                        "aggregation":  "max",
+                        "displayName": "Thread Count",
+                        "color": "#ff5722"
+                    }
+                ]
+            }
+        ]
+    }
+}

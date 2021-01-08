@@ -112,7 +112,7 @@ def get_perfmon_counters(metrics_json) -> List[Metric]:
         # We cannot also keep the perfmon connection opened across multiple runs (maybe we can?)
         try:
             win32pdh.CollectQueryData(perfmon_conn)
-            time.sleep(1)
+            time.sleep(30)
             win32pdh.CollectQueryData(perfmon_conn)
         except Exception as e:
             logger.exception(f"Failed to collect query data: {e}")
@@ -127,11 +127,10 @@ def get_perfmon_counters(metrics_json) -> List[Metric]:
     return collected_metrics
 
 
-class MSMQExtension(BasePlugin):
+class OUTLOOKExtension(BasePlugin):
     def initialize(self, **kwargs):
         self.metrics = kwargs["json_config"]["metrics"]
         self.name = kwargs["json_config"]["name"]
-        #self.cache = {}  # Queues cache to calculate throughput
 
     @exception_logger
     @time_it
@@ -141,14 +140,14 @@ class MSMQExtension(BasePlugin):
             raise ConfigException("The plugin can only run on Windows hosts")
 
         config = kwargs["config"]
-        self.monitored_queues = []
-        self.ignored_queues = []
+        self.monitored_instances = []
+        self.ignored_instances = []
 
         if config.get("monitored", None):
-            self.monitored_queues = config.get("monitored").split(",")
+            self.monitored_instances = config.get("monitored").split(",")
 
         if config.get("ignored", None):
-            self.ignored_queues = config.get("ignored").split(",")
+            self.ignored_instances = config.get("ignored").split(",")
 
         self.snapshot_entries = kwargs["process_snapshot"]
         self.collect_metrics()
@@ -184,26 +183,6 @@ class MSMQExtension(BasePlugin):
             )
         )
 
-        # This is difference between the number of messages in this pull vs the last
-        # This is the inverse of a relative metric
-		
-        # previous_result = self.cache.get(instance.name, 0)
-        # messages_removed = (
-            # previous_result - instance.value if previous_result > instance.value else 0
-        # )
-        # self.results_builder.add_absolute_result(
-            # PluginMeasurement(
-                # key="throughput",
-                # value=messages_removed,
-                # dimensions={
-                    # "Instance": f"{instance.name}",
-                    # "rx_pid": f'{process["pid"]:X}',
-                # },
-                # entity_selector=ExplicitPgiSelector(process["pgi"]),
-            # )
-        # )
-        # self.cache[instance.name] = instance.value
-
     def get_pid_from_name(self, name):
         for entry in self.snapshot_entries.entries:
             for process in entry.processes:
@@ -212,28 +191,28 @@ class MSMQExtension(BasePlugin):
 
         logger.warning(f"Could not find process {name}")
 
-    def will_monitor(self, queue_name):
-        for ignored in self.ignored_queues:
-            if re.findall(ignored, queue_name):
+    def will_monitor(self, instance_name):
+        for ignored in self.ignored_instances:
+            if re.findall(ignored, instance_name):
                 self.logger.info(
-                    f"Queue '{queue_name}' will not be monitored, it matched the regex: '{ignored}'"
+                    f"Instance '{instance_name}' will not be monitored, it matched the regex: '{ignored}'"
                 )
                 return False
 
-        if not self.monitored_queues:
-            self.logger.info(f"Queue '{queue_name}' will be monitored")
+        if not self.monitored_instances:
+            self.logger.info(f"Instance '{instance_name}' will be monitored")
             return True
 
-        for monitored in self.monitored_queues:
-            if re.findall(monitored, queue_name):
+        for monitored in self.monitored_instances:
+            if re.findall(monitored, instance_name):
                 self.logger.info(
-                    f"Queue '{queue_name}' will be monitored, it matched the regex: '{monitored}'"
+                    f"Instance '{instance_name}' will be monitored, it matched the regex: '{monitored}'"
                 )
                 return True
         self.logger.info(
             (
-                f"Queue '{queue_name}' will not be monitored",
-                f"(ignored: '{self.ignored_queues}', monitored: '{self.monitored_queues}')",
+                f"Instance '{instance_name}' will not be monitored",
+                f"(ignored: '{self.ignored_instances}', monitored: '{self.monitored_instances}')",
             )
         )
         return False
