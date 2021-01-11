@@ -1,5 +1,5 @@
 {
-    "version": "1.000",
+    "version": "1.005",
     "name": "custom.python.outlook",
     "metricGroup": "custom.python.outlook",
     "type": "python",
@@ -27,7 +27,7 @@
                 "key": "thread_count",
                 "unit": "Count",
                 "aggregation": "max",
-                "displayname": "Outlook - Thread Count",
+                "displayname": "Thread Count",
                 "dimensions": [
                     "rx_pid",
                     "Instance"
@@ -37,6 +37,142 @@
                 "process_name": "OUTLOOK.EXE",
                 "object": "Process",
                 "counter": "Thread Count"
+            }
+        },
+        {
+            "timeseries": {
+                "key": "elapsed_time",
+                "unit": "Second",
+                "aggregation": "avg",
+                "displayname": "Elapsed Time",
+                "dimensions": [
+                    "rx_pid",
+                    "Instance"
+                ]
+            },
+            "source": {
+                "process_name": "OUTLOOK.EXE",
+                "object": "Process",
+                "counter": "Elapsed Time"
+            }
+        },		
+		{
+				"timeseries": {
+                "key": "pct_ut",
+                "unit": "Percent",
+                "aggregation": "avg",
+                "displayname": "% User Time",
+                "dimensions": [
+                    "rx_pid",
+                    "Instance"
+                ]
+            },
+            "source": {
+                "process_name": "OUTLOOK.EXE",
+                "object": "Process",
+                "counter": "% User Time"
+            }
+        },
+		{
+				"timeseries": {
+                "key": "pct_proct",
+                "unit": "Percent",
+                "aggregation": "avg",
+                "displayname": "% Processor Time",
+                "dimensions": [
+                    "rx_pid",
+                    "Instance"
+                ]
+            },
+            "source": {
+                "process_name": "OUTLOOK.EXE",
+                "object": "Process",
+                "counter": "% Processor Time"
+            }
+        },
+		{
+            "timeseries": {
+                "key": "pct_privt",
+                "unit": "Percent",
+                "aggregation": "avg",
+                "displayname": "% Privileged Time",
+                "dimensions": [
+                    "rx_pid",
+                    "Instance"
+                ]
+            },
+            "source": {
+                "process_name": "OUTLOOK.EXE",
+                "object": "Process",
+                "counter": "% Privileged Time"
+            }
+        },
+		{
+            "timeseries": {
+                "key": "page_fps",
+                "unit": "PerSecond",
+                "aggregation": "sum",
+                "displayname": "Page Faults/sec",
+                "dimensions": [
+                    "rx_pid",
+                    "Instance"
+                ]
+            },
+            "source": {
+                "process_name": "OUTLOOK.EXE",
+                "object": "Process",
+                "counter": "Page Faults/sec"
+            }
+        },
+		{
+            "timeseries": {
+                "key": "total_failures",
+                "unit": "Count",
+                "aggregation": "max",
+                "displayname": "Total # of Load Failures",
+                "dimensions": [
+                    "rx_pid",
+                    "Instance"
+                ]
+            },
+            "source": {
+                "process_name": "OUTLOOK.EXE",
+                "object": ".NET CLR Loading",
+                "counter": "Total # of Load Failures"
+            }
+        },
+		{
+            "timeseries": {
+                "key": "tot_committ_bytes",
+                "unit": "Count",
+                "aggregation": "max",
+                "displayname": "# Total committed Bytes",
+                "dimensions": [
+                    "rx_pid",
+                    "Instance"
+                ]
+            },
+            "source": {
+                "process_name": "OUTLOOK.EXE",
+                "object": ".NET CLR Memory",
+                "counter": "# Total committed Bytes"
+            }
+        },
+		{
+            "timeseries": {
+                "key": "tot_reserved_bytes",
+                "unit": "Count",
+                "aggregation": "max",
+                "displayname": "# Total reserved Bytes",
+                "dimensions": [
+                    "rx_pid",
+                    "Instance"
+                ]
+            },
+            "source": {
+                "process_name": "OUTLOOK.EXE",
+                "object": ".NET CLR Memory",
+                "counter": "# Total reserved Bytes"
             }
         }
     ],
@@ -50,10 +186,88 @@
                         "key":  "thread_count",
                         "aggregation":  "max",
                         "displayName": "Thread Count",
-                        "color": "#ff5722"
+                        "color": "#ff0000"
+                    }
+                ]
+            },
+			{
+                "group": "Additional Metrics",
+                "title": "Elapsed Time",
+                "series": [
+                    {
+                        "key":  "elapsed_time",
+                        "aggregation":  "max",
+                        "displayName": "Elapsed Time",
+                        "color": "#ff0000"
+                    }
+                ]
+            },
+			{
+                "group": "Additional Metrics",
+                "title": "Percentage Time Metrics",
+                "series": [
+                    {
+                        "key":  "pct_ut",
+                        "aggregation":  "avg",
+                        "displayName": "% User Time",
+                        "color": "#ff0000"
+                    },
+					{
+					    "key":  "pct_proct",
+                        "aggregation":  "avg",
+                        "displayName": "% Processor Time",
+                        "color": "#ff8000"
+                    },
+					{
+					    "key":  "pct_privt",
+                        "aggregation":  "avg",
+                        "displayName": "% Privileged Time",
+                        "color": "#ffff00"
+                    }
+                ]
+            },
+			{
+                "group": "Additional Metrics",
+                "title": "Page Faults",
+                "series": [
+					{
+					    "key":  "page_fps",
+                        "aggregation":  "sum",
+                        "displayName": "Page Faults/sec",
+                        "color": "#ff0000"
+                    }
+                ]
+            },
+			{
+                "group": "Additional Metrics",
+                "title": ".NET CLR Memory",
+                "series": [
+                    {
+                        "key":  "tot_committ_bytes",
+                        "aggregation":  "max",
+                        "displayName": "# Total committed Bytes",
+                        "color": "#ff0000"
+                    },
+					{
+					    "key":  "tot_reserved_bytes",
+                        "aggregation":  "max",
+                        "displayName": "# Total reserved Bytes",
+                        "color": "#ff8000"
+                    }
+                ]
+            },
+			{
+                "group": "Additional Metrics",
+                "title": ".NET CLR Loading",
+                "series": [
+					{
+					    "key":  "total_failures",
+                        "aggregation":  "sum",
+                        "displayName": "Total # of Load Failures",
+                        "color": "#ff0000"
                     }
                 ]
             }
-        ]
+		]
     }
 }

@@ -1,4 +1,4 @@
-import os
+ import os
 import re
 import logging
 import time
@@ -112,16 +112,14 @@ def get_perfmon_counters(metrics_json) -> List[Metric]:
         # We cannot also keep the perfmon connection opened across multiple runs (maybe we can?)
         try:
             win32pdh.CollectQueryData(perfmon_conn)
-            time.sleep(30)
+            time.sleep(1)
             win32pdh.CollectQueryData(perfmon_conn)
         except Exception as e:
             logger.exception(f"Failed to collect query data: {e}")
 
         for metric in collected_metrics:
             for instance in metric.instances:
-                _, value = win32pdh.GetFormattedCounterValue(
-                    instance.counter_query, win32pdh.PDH_FMT_DOUBLE
-                )
+                _, value = win32pdh.GetFormattedCounterValue(instance.counter_query, win32pdh.PDH_FMT_DOUBLE)
                 instance.value = value
 
     return collected_metrics
@@ -194,9 +192,9 @@ class OUTLOOKExtension(BasePlugin):
     def will_monitor(self, instance_name):
         for ignored in self.ignored_instances:
             if re.findall(ignored, instance_name):
-                self.logger.info(
-                    f"Instance '{instance_name}' will not be monitored, it matched the regex: '{ignored}'"
-                )
+                #self.logger.info(
+                #    f"Instance '{instance_name}' will not be monitored, it matched the regex: '{ignored}'"
+                #)
                 return False
 
         if not self.monitored_instances:
@@ -209,10 +207,10 @@ class OUTLOOKExtension(BasePlugin):
                     f"Instance '{instance_name}' will be monitored, it matched the regex: '{monitored}'"
                 )
                 return True
-        self.logger.info(
-            (
-                f"Instance '{instance_name}' will not be monitored",
-                f"(ignored: '{self.ignored_instances}', monitored: '{self.monitored_instances}')",
-            )
-        )
+        #self.logger.info(
+        #    (
+        #        f"Instance '{instance_name}' will not be monitored",
+        #        f"(ignored: '{self.ignored_instances}', monitored: '{self.monitored_instances}')",
+        #    )
+        #)
         return False
